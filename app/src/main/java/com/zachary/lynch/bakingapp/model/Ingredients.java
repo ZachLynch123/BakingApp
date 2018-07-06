@@ -1,9 +1,12 @@
 package com.zachary.lynch.bakingapp.model;
 
-
+import com.google.gson.annotations.SerializedName;
 
 public class Ingredients {
-    private double quality;
-    private String measure;
-    private String ingredient;
+    @SerializedName("quantity")
+    private double mQuality;
+    @SerializedName("measure")
+    private String mMeasure;
+    @SerializedName("ingredient")
+    private String mIngredient;
 }
