@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.create();
         Recipes[] recipes = gson.fromJson(json, Recipes[].class);
+        test();
         Log.v(TAG, "runnable " + recipes[0].getRecipeName());
         return recipes;
     }
