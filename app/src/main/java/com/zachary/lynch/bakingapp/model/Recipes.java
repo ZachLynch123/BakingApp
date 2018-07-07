@@ -15,6 +15,14 @@ public class Recipes {
     @SerializedName("steps")
     private List<Steps> mStepsList;
 
+    public List<Ingredients> getIngredientsList() {
+        return mIngredientsList;
+    }
+
+    public List<Steps> getStepsList() {
+        return mStepsList;
+    }
+
     public int getRecipeId() {
         return recipeId;
     }
