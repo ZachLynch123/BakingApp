@@ -34,8 +34,6 @@ public class MainActivity extends AppCompatActivity {
     private static String url = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
     private Gson mGson = new Gson();
     private Recipes[] mRecipes;
-    @BindView(R.id.uniqueid)
-    TextView mTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
