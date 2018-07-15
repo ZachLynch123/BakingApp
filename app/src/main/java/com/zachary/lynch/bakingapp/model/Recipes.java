@@ -2,6 +2,7 @@ package com.zachary.lynch.bakingapp.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -11,15 +12,15 @@ public class Recipes {
     @SerializedName("name")
     private String recipeName;
     @SerializedName("ingredients")
-    private List<Ingredients> mIngredientsList;
+    private ArrayList<Ingredients> mIngredientsList;
     @SerializedName("steps")
-    private List<Steps> mStepsList;
+    private ArrayList<Steps> mStepsList;
 
-    public List<Ingredients> getIngredientsList() {
+    public ArrayList<Ingredients> getIngredientsList() {
         return mIngredientsList;
     }
 
-    public List<Steps> getStepsList() {
+    public ArrayList<Steps> getStepsList() {
         return mStepsList;
     }
 

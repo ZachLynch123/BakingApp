@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +24,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 
 
-public class MainActivityAdapter extends RecyclerView.Adapter<MainActivityAdapter.ViewHolder> {
+public class MainActivityAdapter extends BaseAdapter {
     private Context mContext;
     private Recipes[] mRecipes;
     private TextView mTextView;
@@ -36,57 +37,38 @@ public class MainActivityAdapter extends RecyclerView.Adapter<MainActivityAdapte
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.main_list_layout, parent, false);
-        mTextView = view.findViewById(R.id.recipeName);
-        return new ViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.BindView(mRecipes[position]);
-
-    }
-
-    @Override
-    public int getItemCount() {
+    public int getCount() {
         return mRecipes.length;
     }
 
+    @Override
+    public Object getItem(int position) {
+        return mRecipes[position];
+    }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private String mNames;
-        private List<Ingredients> mIngredients;
-        private List<Steps> mSteps;
-        private MainFragmentListener mListener;
+    @Override
+    public long getItemId(int position) {
+        return 0;
+    }
 
-        public ViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
+    @Override
+    public View getView(int position, View view, ViewGroup parent) {
+        ViewHolder holder;
+
+        if (view == null){
+            view = LayoutInflater.from(mContext).inflate(R.layout.main_list_layout, parent, false);
+            holder = new ViewHolder();
+            holder.recipeName = view.findViewById(R.id.recipeName);
+            view.setTag(holder);
+        } else {
+            holder = (ViewHolder) view.getTag();
         }
+        Recipes singleRecipe = mRecipes[position];
+        holder.recipeName.setText(singleRecipe.getRecipeName());
+        return view;
+    }
 
-        public void BindView(Recipes recipes) {
-            test();
-            mNames = recipes.getRecipeName();
-            mIngredients = recipes.getIngredientsList();
-            mSteps = recipes.getStepsList();
-
-            if (mNames != null) {
-                mTextView.setText(mNames);
-            } else {
-                Toast.makeText(mContext, "this is weird", Toast.LENGTH_LONG).show();
-            }
-        }
-
-        private void test() {
-
-        }
-
-        @Override
-        public void onClick(View v) {
-            mListener.onRecipeClick(mIngredients, mSteps);
-
-        }
+    private static class ViewHolder{
+        TextView recipeName;
     }
 }

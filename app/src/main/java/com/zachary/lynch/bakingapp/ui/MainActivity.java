@@ -17,19 +17,25 @@ import com.zachary.lynch.bakingapp.model.Recipes;
 import com.zachary.lynch.bakingapp.model.Steps;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
-public class MainActivity extends AppCompatActivity implements MainActivityFragment.MainFragmentListener {
+public class MainActivity extends AppCompatActivity implements MainActivityFragment.MainFragmentListener, MasterDetailFragment.MasterListener {
     private static String TAG = "Main Activity";
 
     private static String json;
     private static String url = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
     private Gson mGson = new Gson();
     private static Recipes[] mRecipes;
+    private android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+    private MainActivityFragment mainActivityFragment = new MainActivityFragment();
+    private MasterDetailFragment masterFragment = new MasterDetailFragment();
+    private DetailsFragment detailsFragment = new DetailsFragment();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,18 +46,12 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         while (json == null){
             new FetchJson().execute(url);
         }
-        Log.v(TAG, "MAIN ACTIVITY " + json);
-
-        // this while loop may be redundant. delete after tests
             test();
             mRecipes = setRecipes(json);
-            MainActivityFragment fragment = new MainActivityFragment();
-            MasterDetailFragment masterFragment = new MasterDetailFragment();
-            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-            manager.beginTransaction()
-                    .add(R.id.placeholder, fragment)
-                    .commit();
 
+            manager.beginTransaction()
+                    .add(R.id.placeholder, mainActivityFragment)
+                    .commit();
     }
 
     private Recipes[] setRecipes(String json) {
@@ -62,8 +62,19 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
 
 
     @Override
-    public void onRecipeClick(List<Ingredients> ingredients, List<Steps> steps) {
-        Toast.makeText(this, "Ingredients for 2nd recipe card" + ingredients.get(1), Toast.LENGTH_SHORT).show();
+    public void onRecipeClick(ArrayList<Ingredients> ingredients, ArrayList<Steps> steps) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("ingredients", ingredients);
+        bundle.putParcelableArrayList("steps", steps);
+        masterFragment.setArguments(bundle);
+
+        manager.beginTransaction()
+                .replace(R.id.placeholder, masterFragment)
+                .commit();
+    }
+
+    @Override
+    public void onStepClicked(Bundle bundle) {
 
     }
 
