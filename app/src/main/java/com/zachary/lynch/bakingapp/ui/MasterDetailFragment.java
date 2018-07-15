@@ -8,11 +8,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.zachary.lynch.bakingapp.R;
 import com.zachary.lynch.bakingapp.adapters.IngredientsAdapter;
+import com.zachary.lynch.bakingapp.adapters.StepsAdapter;
 import com.zachary.lynch.bakingapp.model.Ingredients;
 import com.zachary.lynch.bakingapp.model.Steps;
 
@@ -25,9 +27,7 @@ public class MasterDetailFragment extends Fragment {
     private TextView mTextView;
     private List<Ingredients> mIngredients;
     private List<Steps> mSteps;
-    private ListView mIngredientsListView;
     private ListView mStepsListView;
-    private Bundle mBundle;
 
 
     public interface MasterListener{
@@ -37,9 +37,9 @@ public class MasterDetailFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBundle = getArguments();
-        mIngredients = mBundle.getParcelableArrayList("ingredients");
-        mSteps = mBundle.getParcelableArrayList("steps");
+        Bundle bundle = getArguments();
+        mIngredients = bundle.getParcelableArrayList("ingredients");
+        mSteps = bundle.getParcelableArrayList("steps");
 
     }
 
@@ -48,12 +48,21 @@ public class MasterDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.master_fragment,container,false);
-        mIngredientsListView = view.findViewById(R.id.ingredientsList);
+        ListView ingredientsListView = view.findViewById(R.id.ingredientsList);
         mStepsListView = view.findViewById(R.id.stepsList);
 
         IngredientsAdapter adapter = new IngredientsAdapter(getContext(), mIngredients);
-        mIngredientsListView.setAdapter(adapter);
+        ingredientsListView.setAdapter(adapter);
+        test();
 
+        StepsAdapter stepsAdapter = new StepsAdapter(getContext(), mSteps);
+        mStepsListView.setAdapter(stepsAdapter);
+        mStepsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        });
         return view;
 
     }
@@ -72,5 +81,8 @@ public class MasterDetailFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+    private void test(){
+
     }
 }

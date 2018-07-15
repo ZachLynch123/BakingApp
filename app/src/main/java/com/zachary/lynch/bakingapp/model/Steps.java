@@ -11,6 +11,26 @@ public class Steps implements Parcelable {
     private String videoUri;
     private String thumbnail;
 
+    public int getIds() {
+        return id;
+    }
+
+    public String getShortDescription() {
+        return shortDescription;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getVideoUri() {
+        return videoUri;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
     @Override
     public int describeContents() {
         return 0;
