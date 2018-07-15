@@ -6,20 +6,24 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zachary.lynch.bakingapp.R;
 import com.zachary.lynch.bakingapp.adapters.MainActivityAdapter;
+import com.zachary.lynch.bakingapp.model.Ingredients;
 import com.zachary.lynch.bakingapp.model.Recipes;
+import com.zachary.lynch.bakingapp.model.Steps;
 
 import java.io.IOException;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainActivityFragment.MainFragmentListener {
     private static String TAG = "Main Activity";
 
     private static String json;
@@ -42,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
             test();
             mRecipes = setRecipes(json);
             MainActivityFragment fragment = new MainActivityFragment();
+            MasterDetailFragment masterFragment = new MasterDetailFragment();
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction()
                     .add(R.id.placeholder, fragment)
@@ -54,6 +59,14 @@ public class MainActivity extends AppCompatActivity {
         final Gson gson = gsonBuilder.create();
         return gson.fromJson(json, Recipes[].class);
     }
+
+
+    @Override
+    public void onRecipeClick(List<Ingredients> ingredients, List<Steps> steps) {
+        Toast.makeText(this, "Ingredients for 2nd recipe card" + ingredients.get(1), Toast.LENGTH_SHORT).show();
+
+    }
+
 
     private static class FetchJson extends AsyncTask<String, String, String >{
         @Override
