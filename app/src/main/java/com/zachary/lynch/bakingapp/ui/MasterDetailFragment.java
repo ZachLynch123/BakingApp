@@ -26,12 +26,13 @@ public class MasterDetailFragment extends Fragment {
     private MasterListener mListener;
     private TextView mTextView;
     private List<Ingredients> mIngredients;
-    private List<Steps> mSteps;
+    private ArrayList<Steps> mSteps;
     private ListView mStepsListView;
+    private int mIndex;
 
 
     public interface MasterListener{
-        void onStepClicked(Bundle bundle);
+        void onStepClicked(ArrayList<Steps> step, int index);
     }
 
     @Override
@@ -60,7 +61,7 @@ public class MasterDetailFragment extends Fragment {
         mStepsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                mListener.onStepClicked(mSteps, position);
             }
         });
         return view;

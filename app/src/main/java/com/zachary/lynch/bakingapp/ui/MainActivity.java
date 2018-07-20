@@ -3,6 +3,7 @@ package com.zachary.lynch.bakingapp.ui;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,8 +25,12 @@ import butterknife.ButterKnife;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
-public class MainActivity extends AppCompatActivity implements MainActivityFragment.MainFragmentListener, MasterDetailFragment.MasterListener {
+public class MainActivity extends AppCompatActivity implements MainActivityFragment.MainFragmentListener, MasterDetailFragment.MasterListener, DetailsFragment.DetailsListener {
     private static String TAG = "Main Activity";
+    public static String STEP_DESCRIPTION = "description";
+    public static String SHORT_DESC = "short description";
+    public static String VIDEO_URL = "video url";
+    public static String STEPS = "steps";
 
     private static String json;
     private static String url = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
@@ -74,8 +79,14 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
     }
 
     @Override
-    public void onStepClicked(Bundle bundle) {
-
+    public void onStepClicked(ArrayList<Steps> steps, int position) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList(STEPS, steps);
+        bundle.putInt("index", position);
+        detailsFragment.setArguments(bundle);
+        manager.beginTransaction()
+                .replace(R.id.placeholder, detailsFragment)
+                .commit();
     }
 
 
