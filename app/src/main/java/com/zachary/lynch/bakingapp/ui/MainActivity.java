@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -43,7 +44,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
     private MainActivityFragment mainActivityFragment = new MainActivityFragment();
     private MasterDetailFragment masterFragment = new MasterDetailFragment();
     private DetailsFragment detailsFragment = new DetailsFragment();
-    private Bundle saveBundle;
+
+    private boolean mTabletScreen;
 
 
     @Override
@@ -59,9 +61,14 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
             mRecipes = setRecipes(json);
 
             manager.beginTransaction()
-                    .add(R.id.placeholder, mainActivityFragment)
+                    .add(R.id.masterList, mainActivityFragment)
                     .addToBackStack("mainActivityFragment")
                     .commit();
+        if (findViewById(R.id.tabletLayout) != null){
+            mTabletScreen = true;
+        } else {
+            mTabletScreen = false;
+        }
        /* if (savedInstanceState!= null){
             onRestoreInstanceState(savedInstanceState);
         }*/
@@ -82,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         masterFragment.setArguments(bundle);
 
         manager.beginTransaction()
-                .replace(R.id.placeholder, masterFragment)
+                .replace(R.id.masterList, masterFragment)
                 .addToBackStack("masterFragment")
                 .commit();
     }
@@ -92,12 +99,18 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(STEPS, steps);
         bundle.putInt("index", position);
-        saveBundle = bundle;
         detailsFragment.setArguments(bundle);
-        manager.beginTransaction()
-                .replace(R.id.placeholder, detailsFragment)
-                .addToBackStack("detailsFragment")
-                .commit();
+        if (mTabletScreen){
+            manager.beginTransaction()
+                    .replace(R.id.detailsList, detailsFragment)
+                    .commit();
+        }else {
+            manager.beginTransaction()
+                    .remove(masterFragment)
+                    .replace(R.id.detailsList, detailsFragment)
+                    .addToBackStack("detailsFragment")
+                    .commit();
+        }
     }
 
     @Override
@@ -113,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
             }
         }
         manager.beginTransaction()
-                .replace(R.id.placeholder, detailsFragment)
+                .replace(R.id.detailsList, detailsFragment)
                 .addToBackStack("detailsFragment")
                 .commit();
     }
@@ -149,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         int id = item.getItemId();
         if (id == R.id.recipeCardFrag) {
             manager.beginTransaction()
-                    .add(R.id.placeholder, mainActivityFragment)
+                    .add(R.id.masterList, mainActivityFragment)
                     .addToBackStack("mainActivityFragment")
                     .commit();
         }
