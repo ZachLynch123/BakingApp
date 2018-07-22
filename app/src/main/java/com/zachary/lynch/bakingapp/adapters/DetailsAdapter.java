@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,12 +40,14 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
     private Context mContext;
     private int mStepIndex;
     private ArrayList<Steps> mSteps;
+    private boolean mOrientation;
 
 
-    public DetailsAdapter(Context context, int stepIndex, ArrayList<Steps> arrayList) {
+    public DetailsAdapter(Context context, int stepIndex, ArrayList<Steps> arrayList, boolean orientation) {
         mContext = context;
         mStepIndex = stepIndex;
         mSteps = arrayList;
+        mOrientation = orientation;
     }
 
     @NonNull
@@ -147,7 +150,15 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
 
 
         player.setPlayWhenReady(false);
+
+
+        if (mOrientation){
+            ViewGroup.LayoutParams params = mPlayerView.getLayoutParams();
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        }
     }
+
     private void test(){
 
     }

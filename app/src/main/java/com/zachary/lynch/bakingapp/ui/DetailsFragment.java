@@ -1,11 +1,13 @@
 package com.zachary.lynch.bakingapp.ui;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -40,32 +42,50 @@ import java.util.ArrayList;
 
 public class DetailsFragment extends Fragment {
 
-    private SimpleExoPlayerView mPlayerView;
     private ArrayList<Steps> mSteps;
     private int mIndex;
     private Button mBackButton;
     private Button mNextButton;
+    private Bundle saveBundle = null;
+    private Bundle mBundle;
+    private Boolean mOrientation = false;
+    private DetailsListener mDetailsListener;
 
     public interface DetailsListener{
+        void onRotation(Bundle bundle);
     }
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle bundle = getArguments();
-        assert bundle != null;
-        mIndex = bundle.getInt("index");
-        mSteps = bundle.getParcelableArrayList(MainActivity.STEPS);
-
+        /*test();
+        mBundle = getArguments();
+        if (savedInstanceState != null){
+            onViewStateRestored(savedInstanceState);
+        }
+            assert mBundle != null;
+            mIndex = mBundle.getInt("index");
+            mSteps = mBundle.getParcelableArrayList(MainActivity.STEPS);*/
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        test();
+        mBundle = getArguments();
+        if (savedInstanceState != null){
+            onViewStateRestored(savedInstanceState);
+        }
+        assert mBundle != null;
+        mIndex = mBundle.getInt("index");
+        mSteps = mBundle.getParcelableArrayList(MainActivity.STEPS);
+
         final View view = inflater.inflate(R.layout.detail_fragment, container, false);
         mBackButton = view.findViewById(R.id.backButton);
         mNextButton = view.findViewById(R.id.nextButton);
+
+       mOrientation = getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
 
 
         mBackButton.setOnClickListener(new View.OnClickListener() {
@@ -118,7 +138,7 @@ public class DetailsFragment extends Fragment {
 
     private void updateUi(View view) {
         RecyclerView recyclerView = view.findViewById(R.id.detailsRecyclerView);
-        DetailsAdapter adapter = new DetailsAdapter(getContext(), mIndex, mSteps);
+        DetailsAdapter adapter = new DetailsAdapter(getContext(), mIndex, mSteps, mOrientation);
         recyclerView.setAdapter(adapter);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -130,7 +150,7 @@ public class DetailsFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof DetailsListener){
-            Log.v("sdf", "asdf");
+            mDetailsListener = (DetailsListener) context;
         } else {
             throw new RuntimeException(context.toString() +
             " Needs to impliment DetailsInterface");
@@ -139,9 +159,27 @@ public class DetailsFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putBundle("bundle", mBundle);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        test();
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            mBundle = savedInstanceState.getBundle("bundle");
+            mDetailsListener.onRotation(mBundle);
+        }
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
+        mDetailsListener = null;
     }
+
 
     private void test(){
 

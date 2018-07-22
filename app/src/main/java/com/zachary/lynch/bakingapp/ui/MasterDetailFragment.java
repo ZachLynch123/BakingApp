@@ -24,11 +24,9 @@ import java.util.List;
 public class MasterDetailFragment extends Fragment {
 
     private MasterListener mListener;
-    private TextView mTextView;
     private List<Ingredients> mIngredients;
     private ArrayList<Steps> mSteps;
     private ListView mStepsListView;
-    private int mIndex;
 
 
     public interface MasterListener{

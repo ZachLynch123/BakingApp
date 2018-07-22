@@ -4,9 +4,12 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.AsyncTask;
 import android.os.Parcelable;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -40,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
     private MainActivityFragment mainActivityFragment = new MainActivityFragment();
     private MasterDetailFragment masterFragment = new MasterDetailFragment();
     private DetailsFragment detailsFragment = new DetailsFragment();
+    private Bundle saveBundle;
 
 
     @Override
@@ -56,7 +60,11 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
 
             manager.beginTransaction()
                     .add(R.id.placeholder, mainActivityFragment)
+                    .addToBackStack("mainActivityFragment")
                     .commit();
+       /* if (savedInstanceState!= null){
+            onRestoreInstanceState(savedInstanceState);
+        }*/
     }
 
     private Recipes[] setRecipes(String json) {
@@ -75,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
 
         manager.beginTransaction()
                 .replace(R.id.placeholder, masterFragment)
+                .addToBackStack("masterFragment")
                 .commit();
     }
 
@@ -83,9 +92,20 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(STEPS, steps);
         bundle.putInt("index", position);
+        saveBundle = bundle;
         detailsFragment.setArguments(bundle);
         manager.beginTransaction()
                 .replace(R.id.placeholder, detailsFragment)
+                .addToBackStack("detailsFragment")
+                .commit();
+    }
+
+    @Override
+    public void onRotation(Bundle bundle) {
+        detailsFragment.setArguments(bundle);
+        manager.beginTransaction()
+                .replace(R.id.placeholder, detailsFragment)
+                .addToBackStack("detailsFragment")
                 .commit();
     }
 
@@ -108,6 +128,54 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
             return json;
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.navigation_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.recipeCardFrag) {
+            manager.beginTransaction()
+                    .add(R.id.placeholder, mainActivityFragment)
+                    .addToBackStack("mainActivityFragment")
+                    .commit();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        int count = getFragmentManager().getBackStackEntryCount();
+
+        if (count == 0) {
+            super.onBackPressed();
+        } else {
+            getFragmentManager().popBackStack();
+        }
+    }
+/*
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putBundle("bundle", saveBundle);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null){
+            savedInstanceState.getBundle("bundle");
+            detailsFragment.setArguments(savedInstanceState);
+            manager.beginTransaction()
+                    .replace(R.id.placeholder, detailsFragment)
+                    .commit();
+        }
+    }
+    */
 
     public static Recipes[] getRecipes() {
         return mRecipes;
