@@ -2,6 +2,10 @@ package com.zachary.lynch.bakingapp.ui;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.os.PersistableBundle;
@@ -87,6 +91,14 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         bundle.putParcelableArrayList("ingredients", ingredients);
         bundle.putParcelableArrayList("steps", steps);
         masterFragment.setArguments(bundle);
+
+
+        Intent intent = new Intent(this, BakingAppWidget.class);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        int ids[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), BakingAppWidget.class));
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
+        intent.putParcelableArrayListExtra("test", ingredients);
+        sendBroadcast(intent);
 
         manager.beginTransaction()
                 .replace(R.id.masterList, masterFragment)
