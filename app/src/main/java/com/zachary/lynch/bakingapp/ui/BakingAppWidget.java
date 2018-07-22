@@ -22,7 +22,7 @@ public class BakingAppWidget extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         //Toast.makeText(context, "Recieved", Toast.LENGTH_SHORT).show();
         mContext = context;
-        mIntent = intent;
+        mIngredients = intent.getParcelableArrayListExtra("test");
         super.onReceive(context, intent);
     }
 
@@ -32,8 +32,10 @@ public class BakingAppWidget extends AppWidgetProvider {
         // There may be multiple widgets active, so update all of them
 
         for (int appWidgetId : appWidgetIds) {
+            // won't call widgetService
             Intent serviceIntent = new Intent(context, WidgetService.class);
             serviceIntent.putExtra(appWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            serviceIntent.putParcelableArrayListExtra("data", mIngredients);
             serviceIntent.setData(Uri.parse(serviceIntent.toUri(Intent.URI_INTENT_SCHEME)));
 
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.baking_app_widget);

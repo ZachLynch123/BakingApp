@@ -18,22 +18,16 @@ public class WidgetService extends RemoteViewsService {
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
        return new ListProvider(getApplicationContext(), intent);
     }
-    class ListProvider extends BroadcastReceiver implements RemoteViewsService.RemoteViewsFactory {
+    class ListProvider implements RemoteViewsFactory {
         private Context mContext;
         private ArrayList<Ingredients> mIngredients;
         private Intent mIntent;
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            intent.getExtras();
-            mIngredients = intent.getParcelableArrayListExtra("test");
-            mContext = context;
-            mIntent = intent;
-        }
+
 
         public ListProvider(Context context, Intent intent){
             test();
             mContext = context;
-            mIngredients = intent.getParcelableArrayListExtra("test");
+            mIngredients = intent.getParcelableArrayListExtra("data");
         }
         @Override
         public void onCreate() {
