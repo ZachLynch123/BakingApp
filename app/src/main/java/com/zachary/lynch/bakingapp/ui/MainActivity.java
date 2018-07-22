@@ -101,8 +101,17 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
     }
 
     @Override
-    public void onRotation(Bundle bundle) {
+    public void onRotation(Bundle bundle, boolean orientation) {
         detailsFragment.setArguments(bundle);
+        if (orientation){
+            if (getSupportActionBar()!= null){
+                getSupportActionBar().hide();
+            }
+        } else {
+            if (getSupportActionBar() != null){
+                getSupportActionBar().show();
+            }
+        }
         manager.beginTransaction()
                 .replace(R.id.placeholder, detailsFragment)
                 .addToBackStack("detailsFragment")

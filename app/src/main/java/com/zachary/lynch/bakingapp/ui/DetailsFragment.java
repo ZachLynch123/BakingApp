@@ -52,21 +52,13 @@ public class DetailsFragment extends Fragment {
     private DetailsListener mDetailsListener;
 
     public interface DetailsListener{
-        void onRotation(Bundle bundle);
+        void onRotation(Bundle bundle, boolean orientation);
     }
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*test();
-        mBundle = getArguments();
-        if (savedInstanceState != null){
-            onViewStateRestored(savedInstanceState);
-        }
-            assert mBundle != null;
-            mIndex = mBundle.getInt("index");
-            mSteps = mBundle.getParcelableArrayList(MainActivity.STEPS);*/
     }
 
     @Nullable
@@ -161,6 +153,7 @@ public class DetailsFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putBundle("bundle", mBundle);
+        outState.putBoolean("ori", mOrientation);
         super.onSaveInstanceState(outState);
     }
 
@@ -170,7 +163,8 @@ public class DetailsFragment extends Fragment {
         super.onViewStateRestored(savedInstanceState);
         if (savedInstanceState != null) {
             mBundle = savedInstanceState.getBundle("bundle");
-            mDetailsListener.onRotation(mBundle);
+            mOrientation = savedInstanceState.getBoolean("ori");
+            mDetailsListener.onRotation(mBundle, mOrientation);
         }
     }
 
