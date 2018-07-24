@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -53,11 +54,12 @@ public class WidgetService extends RemoteViewsService {
         public RemoteViews getViewAt(int position) {
             test();
             final RemoteViews remoteViews = new RemoteViews(
-                    mContext.getPackageName(), R.layout.ingredients_layout);
+                    mContext.getPackageName(), R.layout.widget_layout);
             Ingredients ingredient = mIngredients.get(position);
             remoteViews.setTextViewText(R.id.quantity, ingredient.getQuality() + "");
             remoteViews.setTextViewText(R.id.measurement, ingredient.getMeasure());
             remoteViews.setTextViewText(R.id.ingredient, ingredient.getIngredient());
+            Log.v("HELLO!", ingredient.getIngredient());
             return remoteViews;
         }
 

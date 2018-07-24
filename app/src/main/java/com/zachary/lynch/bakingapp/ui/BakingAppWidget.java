@@ -34,12 +34,12 @@ public class BakingAppWidget extends AppWidgetProvider {
         for (int appWidgetId : appWidgetIds) {
             // won't call widgetService
             Intent serviceIntent = new Intent(context, WidgetService.class);
-            serviceIntent.putExtra(appWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             serviceIntent.putParcelableArrayListExtra("data", mIngredients);
             serviceIntent.setData(Uri.parse(serviceIntent.toUri(Intent.URI_INTENT_SCHEME)));
 
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.baking_app_widget);
-            remoteViews.setRemoteAdapter(R.id.ingredientsList, serviceIntent);
+            remoteViews.setRemoteAdapter(R.id.widgetList, serviceIntent);
             appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
         }
         }

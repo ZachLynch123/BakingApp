@@ -5,7 +5,7 @@
     android:padding="@dimen/widget_margin">
 
     <ListView
-        android:id="@+id/ingredientsList"
+        android:id="@+id/widgetList"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
