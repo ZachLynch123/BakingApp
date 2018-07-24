@@ -51,7 +51,8 @@ public class DetailsFragment extends Fragment {
     private Boolean mOrientation = false;
     private DetailsListener mDetailsListener;
 
-    public interface DetailsListener{
+    public interface DetailsListener {
+        void buttonClicked(int index, ArrayList<Steps> steps);
         void onRotation(Bundle bundle, boolean orientation);
     }
 
@@ -77,7 +78,7 @@ public class DetailsFragment extends Fragment {
         mBackButton = view.findViewById(R.id.backButton);
         mNextButton = view.findViewById(R.id.nextButton);
 
-       mOrientation = getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+
 
 
         mBackButton.setOnClickListener(new View.OnClickListener() {
@@ -90,6 +91,7 @@ public class DetailsFragment extends Fragment {
                     mBackButton.setVisibility(View.VISIBLE);
                     mIndex = mIndex - 1;
                     checkButtonStatus();
+                    mDetailsListener.buttonClicked(mIndex, mSteps);
                     updateUi(view);
                 }
             }
@@ -105,6 +107,7 @@ public class DetailsFragment extends Fragment {
                 } else {
                     mNextButton.setVisibility(View.VISIBLE);
                     mIndex = mIndex + 1;
+                    mDetailsListener.buttonClicked(mIndex, mSteps);
                     checkButtonStatus();
                     updateUi(view);
                 }
@@ -152,6 +155,7 @@ public class DetailsFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
+        mOrientation = getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
         outState.putBundle("bundle", mBundle);
         outState.putBoolean("ori", mOrientation);
         super.onSaveInstanceState(outState);
@@ -173,6 +177,7 @@ public class DetailsFragment extends Fragment {
         super.onDetach();
         mDetailsListener = null;
     }
+
 
 
     private void test(){

@@ -6,6 +6,8 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.os.PersistableBundle;
@@ -48,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
     private MainActivityFragment mainActivityFragment = new MainActivityFragment();
     private MasterDetailFragment masterFragment = new MasterDetailFragment();
     private DetailsFragment detailsFragment = new DetailsFragment();
+    private VideoFragment videoFragment = new VideoFragment();
+    private Bundle mBundle;
 
     private boolean mTabletScreen;
 
@@ -58,9 +62,11 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        while (json == null){
-            new FetchJson().execute(url);
-        }
+        if (isNetworkAvailable()) {
+
+            while (json == null) {
+                new FetchJson().execute(url);
+            }
             test();
             mRecipes = setRecipes(json);
 
@@ -68,14 +74,17 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
                     .add(R.id.masterList, mainActivityFragment)
                     .addToBackStack("mainActivityFragment")
                     .commit();
-        if (findViewById(R.id.tabletLayout) != null){
-            mTabletScreen = true;
-        } else {
-            mTabletScreen = false;
-        }
+            if (findViewById(R.id.tabletLayout) != null) {
+                mTabletScreen = true;
+            } else {
+                mTabletScreen = false;
+            }
        /* if (savedInstanceState!= null){
             onRestoreInstanceState(savedInstanceState);
         }*/
+        } else {
+            Toast.makeText(this, "Please check network connection", Toast.LENGTH_LONG).show();
+        }
     }
 
     private Recipes[] setRecipes(String json) {
@@ -112,20 +121,47 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         bundle.putParcelableArrayList(STEPS, steps);
         bundle.putInt("index", position);
         detailsFragment.setArguments(bundle);
+        videoFragment.setArguments(bundle);
+
         if (mTabletScreen){
             manager.beginTransaction()
                     .replace(R.id.detailsList, detailsFragment)
+                    .replace(R.id.videoPlaceHolder, videoFragment)
                     .commit();
         }else {
             manager.beginTransaction()
                     .remove(masterFragment)
                     .replace(R.id.detailsList, detailsFragment)
+                    .replace(R.id.videoPlaceHolder, videoFragment)
                     .addToBackStack("detailsFragment")
                     .commit();
         }
     }
 
     @Override
+    public void buttonClicked(int index, ArrayList<Steps> steps) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList(STEPS, steps);
+        bundle.putInt("index", index);
+        videoFragment = new VideoFragment();
+        videoFragment.setArguments(bundle);
+        manager.beginTransaction()
+                .replace(R.id.videoPlaceHolder, videoFragment)
+                .commit();
+    }
+
+    @Override
+    public void onRotation(Bundle bundle, boolean orientation) {
+        detailsFragment.setArguments(bundle);
+        manager.beginTransaction()
+                .remove(mainActivityFragment)
+                .replace(R.id.detailsList, detailsFragment)
+                .replace(R.id.videoPlaceHolder, videoFragment)
+                .commit();
+
+    }
+
+    /*@Override
     public void onRotation(Bundle bundle, boolean orientation) {
         detailsFragment.setArguments(bundle);
         if (orientation){
@@ -142,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
                 .addToBackStack("detailsFragment")
                 .commit();
     }
+    */
 
 
     private static class FetchJson extends AsyncTask<String, String, String >{
@@ -191,13 +228,13 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
             getFragmentManager().popBackStack();
         }
     }
-/*
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putBundle("bundle", saveBundle);
+        outState.putBundle("bundle", mBundle);
         super.onSaveInstanceState(outState);
     }
-
+/*
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
@@ -213,6 +250,18 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
 
     public static Recipes[] getRecipes() {
         return mRecipes;
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager manager = (ConnectivityManager)
+                getSystemService(getApplicationContext().CONNECTIVITY_SERVICE);
+        assert manager != null;
+        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+        boolean isAvailable = false;
+        if (networkInfo != null && networkInfo.isConnected()) {
+            isAvailable = true;
+        }
+        return isAvailable;
     }
 
     public void test(){}

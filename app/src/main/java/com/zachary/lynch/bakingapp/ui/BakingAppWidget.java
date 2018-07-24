@@ -40,6 +40,7 @@ public class BakingAppWidget extends AppWidgetProvider {
 
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.baking_app_widget);
             remoteViews.setRemoteAdapter(R.id.ingredientsList, serviceIntent);
+            appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
         }
         }
 

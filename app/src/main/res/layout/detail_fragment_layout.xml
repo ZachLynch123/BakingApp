@@ -4,11 +4,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-        <com.google.android.exoplayer2.ui.PlayerView
-            android:layout_marginTop="5dp"
-            android:id="@+id/videoPlayerView"
-            android:layout_width="match_parent"
-            android:layout_height="190dp" />
 
     <TextView
         android:id="@+id/noVideo"

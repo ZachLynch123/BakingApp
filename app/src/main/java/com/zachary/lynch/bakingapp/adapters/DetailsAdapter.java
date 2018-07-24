@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -25,6 +26,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
@@ -41,6 +43,8 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
     private int mStepIndex;
     private ArrayList<Steps> mSteps;
     private boolean mOrientation;
+    private int startWindow;
+    private long startPosition;
 
 
     public DetailsAdapter(Context context, int stepIndex, ArrayList<Steps> arrayList, boolean orientation) {
@@ -108,7 +112,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
                 forwardDesc.setText(mSteps.get(mStepIndex + 1).getShortDescription());
             }*/
 
-            initializePlayer(playerView);
+            //initializePlayer(playerView);
 
         }
     }
@@ -128,6 +132,12 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
         mPlayerView.requestFocus();
 
         mPlayerView.setPlayer(player);
+
+        boolean resumePosition = startWindow != C.INDEX_UNSET;
+
+        if (resumePosition){
+            mPlayerView.getPlayer().seekTo(startWindow, startPosition);
+        }
 
         DefaultBandwidthMeter defaultBandwidthMeter = new DefaultBandwidthMeter();
 

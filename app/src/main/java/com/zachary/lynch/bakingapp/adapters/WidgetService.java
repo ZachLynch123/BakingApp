@@ -46,7 +46,7 @@ public class WidgetService extends RemoteViewsService {
 
         @Override
         public int getCount() {
-            return mIngredients.size();
+            return (mIngredients != null) ? mIngredients.size(): 0;
         }
 
         @Override
