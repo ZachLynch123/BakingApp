@@ -11,25 +11,32 @@ import android.support.test.rule.ActivityTestRule;
 
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.zachary.lynch.bakingapp.ui.MainActivity;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
 
     @RunWith(AndroidJUnit4.class)
-    public class CardClickTest {
+    public class TabletLayoutTest {
         @Rule
         public ActivityTestRule<MainActivity> mActivityTestRule = new
                 ActivityTestRule<>(MainActivity.class);
 
+
+        @Before
+        public void setUp() throws Exception{
+
+            mActivityTestRule.getActivity()
+                    .getSupportFragmentManager()
+                    .beginTransaction();
+        }
+
         @Test
         public void doubleLayout(){
-            onView(withId(R.layout.main_fragment)).check(doesNotExist());
+            onView(withId(R.id.tabletLayout)).check(doesNotExist());
         }
 }

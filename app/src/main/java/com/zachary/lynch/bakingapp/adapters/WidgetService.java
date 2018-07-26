@@ -19,20 +19,21 @@ public class WidgetService extends RemoteViewsService {
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
        return new ListProvider(getApplicationContext(), intent);
     }
-    class ListProvider implements RemoteViewsFactory {
+    class ListProvider implements RemoteViewsService.RemoteViewsFactory {
         private Context mContext;
         private ArrayList<Ingredients> mIngredients;
         private Intent mIntent;
 
 
-        public ListProvider(Context context, Intent intent){
+        ListProvider(Context context, Intent intent){
             test();
             mContext = context;
+            mIntent = intent;
             mIngredients = intent.getParcelableArrayListExtra("data");
         }
         @Override
         public void onCreate() {
-            test();
+            mIngredients = mIntent.getParcelableArrayListExtra("data");
         }
 
         @Override
