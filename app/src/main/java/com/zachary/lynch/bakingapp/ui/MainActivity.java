@@ -11,6 +11,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.os.PersistableBundle;
+import android.support.annotation.RestrictTo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,7 +35,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-
+@RestrictTo(RestrictTo.Scope.TESTS)
 public class MainActivity extends AppCompatActivity implements MainActivityFragment.MainFragmentListener, MasterDetailFragment.MasterListener, DetailsFragment.DetailsListener {
     private static String TAG = "Main Activity";
     public static String STEP_DESCRIPTION = "description";
@@ -110,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         sendBroadcast(intent);
 
         manager.beginTransaction()
-                .replace(R.id.masterList, masterFragment)
+                .replace(R.id.masterList, masterFragment,"MasterFragment")
                 .addToBackStack("masterFragment")
                 .commit();
     }
@@ -131,8 +132,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         }else {
             manager.beginTransaction()
                     .remove(masterFragment)
-                    .replace(R.id.detailsList, detailsFragment)
-                    .replace(R.id.videoPlaceHolder, videoFragment)
+                    .replace(R.id.detailsList, detailsFragment, "DetailsFragment")
+                    .replace(R.id.videoPlaceHolder, videoFragment, "VideoFragment")
                     .addToBackStack("detailsFragment")
                     .commit();
         }

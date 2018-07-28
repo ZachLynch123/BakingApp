@@ -57,19 +57,28 @@ public class VideoFragment extends Fragment {
         void onRotation(Bundle bundle, boolean orientation);
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        mBundle = getArguments();
+        if (mBundle != null) {
+            mIndex = mBundle.getInt("index");
+            mSteps = mBundle.getParcelableArrayList(MainActivity.STEPS);
+        }
+        mBundle = null;
+
+        super.onCreate(savedInstanceState);
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (mBundle != null) {
-            mBundle = getArguments();
-            assert mBundle != null;
-            mIndex = mBundle.getInt("index");
-            mSteps = mBundle.getParcelableArrayList(MainActivity.STEPS);
-        }else if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             startWindow = savedInstanceState.getInt("resume");
             startPosition = savedInstanceState.getLong("seek");
             mOrientation = savedInstanceState.getBoolean("ori");
+            mSteps = savedInstanceState.getParcelableArrayList("steps");
+            mIndex =savedInstanceState.getInt("index");
+            mBundle = null;
         }
 
 
@@ -79,8 +88,8 @@ public class VideoFragment extends Fragment {
         mPlayerView = view.findViewById(R.id.videoPlayer);
         mThumbnail = view.findViewById(R.id.thumbnail);
         mOrientation = getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
-        mThumbUrl = mSteps.get(mIndex).getThumbnail();
         mVideoUrl = mSteps.get(mIndex).getVideoURL();
+        mThumbUrl = mSteps.get(mIndex).getThumbnail();
 
 
         if (!"".equals(mVideoUrl)) {
@@ -99,6 +108,7 @@ public class VideoFragment extends Fragment {
             mThumbnail.setVisibility(View.VISIBLE);
             mThumbnail.setImageResource(R.drawable.exo_edit_mode_logo);
         }
+        mBundle = null;
         return view;
     }
 
@@ -153,6 +163,7 @@ public class VideoFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
+        mBundle = null;
         outState.putLong("seek", startPosition);
         outState.putBoolean("ori", mOrientation);
         outState.putInt("index", mIndex);
@@ -170,9 +181,11 @@ public class VideoFragment extends Fragment {
 
         if (mPlayerView != null && mPlayerView.getPlayer() != null) {
             startPosition = mPlayerView.getPlayer().getCurrentPosition();
+            mOrientation = getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
             mPlayerView.getPlayer().stop();
             mPlayerView.getPlayer().release();
             mPlayerView = null;
+            mBundle = null;
         }
     }
 

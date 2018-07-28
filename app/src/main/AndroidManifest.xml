@@ -31,6 +31,10 @@
         </receiver>
         <service android:name=".adapters.WidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS"/>
+        <service android:name=".adapters.TestService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
+
+
     </application>
 
 </manifest>
