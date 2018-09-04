@@ -11,7 +11,6 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.os.PersistableBundle;
-import android.support.annotation.RestrictTo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,8 +34,8 @@ import java.util.List;
 import butterknife.ButterKnife;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-@RestrictTo(RestrictTo.Scope.TESTS)
-public class MainActivity extends AppCompatActivity implements MainActivityFragment.MainFragmentListener, MasterDetailFragment.MasterListener, DetailsFragment.DetailsListener {
+
+public class MainActivity extends AppCompatActivity implements MainActivityFragment.MainFragmentListener {
     private static String TAG = "Main Activity";
     public static String STEP_DESCRIPTION = "description";
     public static String SHORT_DESC = "short description";
@@ -53,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
     private DetailsFragment detailsFragment = new DetailsFragment();
     private VideoFragment videoFragment = new VideoFragment();
     private Bundle mBundle;
+    private int count;
 
     private boolean mTabletScreen;
 
@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
 
             manager.beginTransaction()
                     .add(R.id.masterList, mainActivityFragment)
-                    .addToBackStack("mainActivityFragment")
                     .commit();
             if (findViewById(R.id.tabletLayout) != null) {
                 mTabletScreen = true;
@@ -100,18 +99,20 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList("ingredients", ingredients);
         bundle.putParcelableArrayList("steps", steps);
-        masterFragment.setArguments(bundle);
-
 
         Intent intent = new Intent(this, BakingAppWidget.class);
+        Intent detailsIntent = new Intent(this, DetailsActivity.class);
+        detailsIntent.putExtras(bundle);
+        startActivity(detailsIntent);
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         int ids[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), BakingAppWidget.class));
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
         intent.putParcelableArrayListExtra("test", ingredients);
         sendBroadcast(intent);
+        /*
 
         manager.beginTransaction()
-                .replace(R.id.masterList, masterFragment,"MasterFragment")
+                .replace(R.id.masterList, masterFragment)
                 .addToBackStack("masterFragment")
                 .commit();
     }
@@ -132,8 +133,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         }else {
             manager.beginTransaction()
                     .remove(masterFragment)
-                    .replace(R.id.detailsList, detailsFragment, "DetailsFragment")
-                    .replace(R.id.videoPlaceHolder, videoFragment, "VideoFragment")
+                    .replace(R.id.detailsList, detailsFragment)
+                    .replace(R.id.videoPlaceHolder, videoFragment)
                     .addToBackStack("detailsFragment")
                     .commit();
         }
@@ -153,14 +154,16 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
 
     @Override
     public void onRotation(Bundle bundle, boolean orientation) {
-        detailsFragment.setArguments(bundle);
-        manager.beginTransaction()
+        if (orientation){
+            videoFragment.setArguments(bundle);
+            manager.beginTransaction()
                 .remove(mainActivityFragment)
-                .replace(R.id.detailsList, detailsFragment)
                 .replace(R.id.videoPlaceHolder, videoFragment)
-                .commit();
+                .commit();}
 
-    }
+
+        }
+
 
     /*@Override
     public void onRotation(Bundle bundle, boolean orientation) {
@@ -180,6 +183,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
                 .commit();
     }
     */
+    }
 
 
     private static class FetchJson extends AsyncTask<String, String, String >{
@@ -191,11 +195,11 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
                     .url(url)
                     .build();
             while (json == null){
-                    try{
-                        json = client.newCall(request).execute().body().string();
-                    }catch (IOException e){
-                        e.printStackTrace();
-                    }
+                try{
+                    json = client.newCall(request).execute().body().string();
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
             }
             return json;
         }
@@ -270,5 +274,5 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
 
 }
 
-    // look up on udacity how to set up main activity using a grid layout or some kind of list layout with pictures
-    //
+// look up on udacity how to set up main activity using a grid layout or some kind of list layout with pictures
+//
